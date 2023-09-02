@@ -1,3 +1,7 @@
+## 此fork代码用于特定目的(甚至特定模型文件), 不具有泛用性
+
+
+
 # Emotional VITS
 
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/innnky/nene-emotion) 
