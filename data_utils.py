@@ -25,7 +25,8 @@ class TextAudioLoader(torch.utils.data.Dataset):
         self.filter_length  = hparams.filter_length 
         self.hop_length     = hparams.hop_length 
         self.win_length     = hparams.win_length
-        self.sampling_rate  = hparams.sampling_rate 
+        self.sampling_rate  = hparams.sampling_rate
+        # self.symbols        = hparams.symbols
 
         self.cleaned_text = getattr(hparams, "cleaned_text", False)
 
@@ -162,7 +163,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         2) normalizes text and converts them to sequences of integers
         3) computes spectrograms from audio files.
     """
-    def __init__(self, audiopaths_sid_text, hparams):
+    def __init__(self, audiopaths_sid_text, hparams, symbols):
         self.audiopaths_sid_text = load_filepaths_and_text(audiopaths_sid_text)
         self.text_cleaners = hparams.text_cleaners
         self.max_wav_value = hparams.max_wav_value
@@ -171,7 +172,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         self.hop_length     = hparams.hop_length
         self.win_length     = hparams.win_length
         self.sampling_rate  = hparams.sampling_rate
-
+        self.symbols        = symbols
         self.cleaned_text = getattr(hparams, "cleaned_text", False)
 
         self.add_blank = hparams.add_blank
@@ -228,9 +229,9 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
 
     def get_text(self, text):
         if self.cleaned_text:
-            text_norm = cleaned_text_to_sequence(text)
+            text_norm = cleaned_text_to_sequence(text, self.symbols)
         else:
-            text_norm = text_to_sequence(text, self.text_cleaners)
+            text_norm = text_to_sequence(text, self.symbols, self.text_cleaners)
         if self.add_blank:
             text_norm = commons.intersperse(text_norm, 0)
         text_norm = torch.LongTensor(text_norm)
